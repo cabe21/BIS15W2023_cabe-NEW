@@ -3,9 +3,9 @@ title: "Lab 11 Homework"
 author: "Chris Abe"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_document: 
     theme: spacelab
-    toc: no
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -32,10 +32,7 @@ The idea for this assignment came from [Rebecca Barter's](http://www.rebeccabart
 
 ## Gapminder
 For this assignment, we are going to use the dataset [gapminder](https://cran.r-project.org/web/packages/gapminder/index.html). Gapminder includes information about economics, population, and life expectancy from countries all over the world. You will need to install it before use. This is the same data that we will use for midterm 2 so this is good practice.
-```{r}
-install.packages("gapminder")
-library("gapminder")
-```
+
 
 ## Questions
 The questions below are open-ended and have many possible solutions. Your approach should, where appropriate, include numerical summaries and visuals. Be creative; assume you are building an analysis that you would ultimately present to an audience of stakeholders. Feel free to try out different `geoms` if they more clearly present your results.  
@@ -124,45 +121,41 @@ gapminder %>%
 
 **8. Use your results from the question above to plot population growth for the top five countries since 1952.**
 ```{r}
+gapminder %>% 
+  filter(country=="China" | country=="India" | country=="United States" | country=="Indonesia" | country=="Brazil") %>% 
+  select(year, pop, country) %>% 
+  ggplot(aes(x=year, y=pop, color=country))+
+  geom_line()+ 
+  labs(title = "Population Growth from the 5 Fastest Growing Couintries",
+       x = "Year",
+       y = "Population")
 
 ```
 
 **9. How does per-capita GDP growth compare between these same five countries?**
 ```{r}
 gapminder %>% 
-  filter(continent == "China" | continent == "India" | continent == "United States" | continent == "Indonesia" | continent == "Brazil") %>% 
-  group_by(year, continent) %>% 
-  ggplot(aes(x=year, y= gdpPercap, group=continent, color=continent))+
+  filter(country == "China" | country == "India" | country == "United States" | country == "Indonesia" | country == "Brazil") %>% 
+  group_by(year, country) %>% 
+  ggplot(aes(x=year, y= gdpPercap, group=country, color= country))+
   geom_line()+
   geom_point(shape=2)+
   labs(title = "GDP Growth for the Highest Population Growth Countries",
        x = "Year",
        y = "GDP")
 ```
-  group_by(year, continent) %>% 
-  ggplot(aes(x=year, y= gdpPercap, group=continent, color=continent))+
-  geom_line()+
-  geom_point(shape=2)+
-  labs(title = "GDP Growth for the Highest Population Growth Countries",
-       x = "Year",
-       y = "GDP")
-```
-**10. Make one plot of your choice that uses faceting!**
-
+## ANSWER TO QUESTION 10. For some reason every code chunk that I put under the question 10 did not have the little run button. Must be some sort of glitch. (**10. Make one plot of your choice that uses faceting!**)
 ```{r}
 gapminder %>% 
-  ggplot(aes(x=diet, y=log10_mass, fill=migratory_strategy))+ 
-  geom_boxplot(alpha=0.4) + 
-  facet_wrap(~migratory_strategy, ncol=4)+
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  labs(title = "Mass by Diet and Migratory Strategy",
+  ggplot(aes(x=country, y=pop, fill=lifeExp))+ 
+  geom_boxplot(alpha=0.6) + 
+  facet_wrap(~lifeExp, ncol=6)+
+  theme(axis.text.x = element_text(angle = 50, hjust = 2))+
+  labs(title = "Population vs Life Expectancy Per country",
        x = NULL,
-       y = "Log 10 Mass",
-       fill = "Migratory Strategy")
+       y = "Population",
+       fill = "lifeExp")
 ```
-
-
-
-
+## Whenever I run the code above it just keeps loading and does not produce a plot. Will ask about it in class. 
 ## Push your final code to GitHub!
 Please be sure that you check the `keep md` file in the knit preferences. 
