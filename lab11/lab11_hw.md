@@ -15,6 +15,10 @@ output:
 library("gapminder")
 ```
 
+```
+## Warning: package 'gapminder' was built under R version 4.1.3
+```
+
 ## Instructions
 Answer the following questions and complete the exercises in RMarkdown. Please embed all of your code and push your final work to your repository. Your final lab report should be organized, clean, and run free from errors. Remember, you must remove the `#` for the included code chunks to run. Be sure to add your name to the author header above. For any included plots, make sure they are clearly labeled. You are free to use any plot type that you feel best communicates the results of your analysis.  
 
@@ -80,7 +84,7 @@ naniar::miss_var_summary(gapminder)
 ```
 
 ```
-## # A tibble: 6 × 3
+## # A tibble: 6 x 3
 ##   variable  n_miss pct_miss
 ##   <chr>      <int>    <dbl>
 ## 1 country        0        0
@@ -97,7 +101,7 @@ gapminder
 ```
 
 ```
-## # A tibble: 1,704 × 6
+## # A tibble: 1,704 x 6
 ##    country     continent  year lifeExp      pop gdpPercap
 ##    <fct>       <fct>     <int>   <dbl>    <int>     <dbl>
 ##  1 Afghanistan Asia       1952    28.8  8425333      779.
@@ -110,39 +114,66 @@ gapminder
 ##  8 Afghanistan Asia       1987    40.8 13867957      852.
 ##  9 Afghanistan Asia       1992    41.7 16317921      649.
 ## 10 Afghanistan Asia       1997    41.8 22227415      635.
-## # … with 1,694 more rows
+## # ... with 1,694 more rows
 ```
 
 
 **2. Among the interesting variables in gapminder is life expectancy. How has global life expectancy changed between 1952 and 2007?**
 
 ```r
-gapminder%>% 
-  ggplot(aes(x=year, y=lifeExp))+ 
-  geom_point(na.rm=T)+
-  geom_point()+
-  geom_smooth(method = lm, se=F)+
-  labs(title = "Change in Life Expectency Over Time", x="Year", y="Life Expectancy (years)")+
-  theme(plot.title = element_text(size=rel(1.25), hjust=1))
+p1 <- gapminder %>% 
+  group_by(year) %>% 
+   summarize(mean=mean(lifeExp))
+p1
 ```
 
 ```
-## `geom_smooth()` using formula = 'y ~ x'
+## # A tibble: 12 x 2
+##     year  mean
+##    <int> <dbl>
+##  1  1952  49.1
+##  2  1957  51.5
+##  3  1962  53.6
+##  4  1967  55.7
+##  5  1972  57.6
+##  6  1977  59.6
+##  7  1982  61.5
+##  8  1987  63.2
+##  9  1992  64.2
+## 10  1997  65.0
+## 11  2002  65.7
+## 12  2007  67.0
 ```
 
-![](lab11_hw_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
+```r
+gapminder %>% 
+  group_by(year) %>% 
+   summarize(mean=mean(lifeExp))%>% 
+  ggplot(aes(x=year, y= mean))+
+  geom_line()+
+  geom_point(shape=3)+
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
+  labs(title = "Life Expectancy Change Over Time",
+       x = "Year",
+       y = "Life Expectancy (years)")
+```
+
+![](lab11_hw_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+group_by(year, lifeExp) %>% 
+   summarize(mean=mean(lifeExp))%>% 
 **3. How do the distributions of life expectancy compare for the years 1952 and 2007?**
 
 ```r
 gapminder %>% 
   filter(year == 1952| year == 2007) %>% 
-  ggplot(aes(x=year, y=lifeExp, group = year))+ 
-  
-  geom_boxplot(na.rm = T)
+    mutate(year=as.factor(year)) %>% 
+  ggplot(aes(x=lifeExp, group=year, fill=year))+
+  geom_density(alpha  =0.4, color = "black")+
+  labs(title = "Distrubition of Life Expectancy")
 ```
 
-![](lab11_hw_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](lab11_hw_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 **4. Your answer above doesn't tell the whole story since life expectancy varies by region. Make a summary that shows the min, mean, and max life expectancy by continent for all years represented in the data.**
 
@@ -155,7 +186,7 @@ gapminder %>%
 ```
 
 ```
-## # A tibble: 142 × 4
+## # A tibble: 142 x 4
 ##    country     min_life max_life mean_life
 ##    <fct>          <dbl>    <dbl>     <dbl>
 ##  1 Afghanistan     28.8     43.8      37.5
@@ -168,7 +199,7 @@ gapminder %>%
 ##  8 Bahrain         50.9     75.6      65.6
 ##  9 Bangladesh      37.5     64.1      49.8
 ## 10 Belgium         68       79.4      73.6
-## # … with 132 more rows
+## # ... with 132 more rows
 ```
 
 **5. How has life expectancy changed between 1952-2007 for each continent?**
@@ -191,7 +222,7 @@ gapminder %>%
 ## `.groups` argument.
 ```
 
-![](lab11_hw_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](lab11_hw_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 
 **6. We are interested in the relationship between per capita GDP and life expectancy; i.e. does having more money help you live longer?**
@@ -207,10 +238,10 @@ gapminder%>%
 ```
 
 ```
-## `geom_smooth()` using formula = 'y ~ x'
+## `geom_smooth()` using formula 'y ~ x'
 ```
 
-![](lab11_hw_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](lab11_hw_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
 **7. Which countries have had the largest population growth since 1952?**
 
@@ -224,7 +255,7 @@ gapminder %>%
 ```
 
 ```
-## # A tibble: 142 × 4
+## # A tibble: 142 x 4
 ##    country          `1952`     `2007` difference
 ##    <fct>             <int>      <int>      <int>
 ##  1 China         556263527 1318683096  762419569
@@ -237,7 +268,7 @@ gapminder %>%
 ##  8 Nigeria        33119096  135031164  101912068
 ##  9 Mexico         30144317  108700891   78556574
 ## 10 Philippines    22438691   91077287   68638596
-## # … with 132 more rows
+## # ... with 132 more rows
 ```
 
 **8. Use your results from the question above to plot population growth for the top five countries since 1952.**
@@ -253,7 +284,7 @@ gapminder %>%
        y = "Population")
 ```
 
-![](lab11_hw_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](lab11_hw_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
 **9. How does per-capita GDP growth compare between these same five countries?**
 
@@ -269,22 +300,29 @@ gapminder %>%
        y = "GDP")
 ```
 
-![](lab11_hw_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](lab11_hw_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 ## ANSWER TO QUESTION 10. For some reason every code chunk that I put under the question 10 did not have the little run button. Must be some sort of glitch. (**10. Make one plot of your choice that uses faceting!**)
+
 
 ```r
 gapminder %>% 
-  ggplot(aes(x=country, y=pop, fill=lifeExp))+ 
-  geom_boxplot(alpha=0.6) + 
-  facet_wrap(~lifeExp, ncol=6)+
+  filter(country == "China" | country == "India" | country == "United States" | country == "Indonesia" | country == "Brazil") %>% 
+  ggplot(aes(x=lifeExp, y=pop, fill=country))+ 
+  geom_point(alpha=0.6) + 
+    geom_smooth(method=lm, se=T)+
+  facet_wrap(~year, ncol=4)+
   theme(axis.text.x = element_text(angle = 50, hjust = 2))+
   labs(title = "Population vs Life Expectancy Per country",
        x = NULL,
        y = "Population",
-       fill = "lifeExp")
+       fill = "country")
 ```
 
-![](lab11_hw_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+```
+## `geom_smooth()` using formula 'y ~ x'
+```
+
+![](lab11_hw_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 ## Whenever I run the code above it just keeps loading and does not produce a plot. Will ask about it in class. 
 ## Push your final code to GitHub!
 Please be sure that you check the `keep md` file in the knit preferences. 

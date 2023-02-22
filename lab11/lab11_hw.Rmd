@@ -59,22 +59,35 @@ gapminder
 
 **2. Among the interesting variables in gapminder is life expectancy. How has global life expectancy changed between 1952 and 2007?**
 ```{r}
-gapminder%>% 
-  ggplot(aes(x=year, y=lifeExp))+ 
-  geom_point(na.rm=T)+
-  geom_point()+
-  geom_smooth(method = lm, se=F)+
-  labs(title = "Change in Life Expectency Over Time", x="Year", y="Life Expectancy (years)")+
-  theme(plot.title = element_text(size=rel(1.25), hjust=1))
+p1 <- gapminder %>% 
+  group_by(year) %>% 
+   summarize(mean=mean(lifeExp))
+p1
+
 ```
 
+```{r}
+gapminder %>% 
+  group_by(year) %>% 
+   summarize(mean=mean(lifeExp))%>% 
+  ggplot(aes(x=year, y= mean))+
+  geom_line()+
+  geom_point(shape=3)+
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
+  labs(title = "Life Expectancy Change Over Time",
+       x = "Year",
+       y = "Life Expectancy (years)")
+```
+group_by(year, lifeExp) %>% 
+   summarize(mean=mean(lifeExp))%>% 
 **3. How do the distributions of life expectancy compare for the years 1952 and 2007?**
 ```{r}
 gapminder %>% 
   filter(year == 1952| year == 2007) %>% 
-  ggplot(aes(x=year, y=lifeExp, group = year))+ 
-  
-  geom_boxplot(na.rm = T)
+    mutate(year=as.factor(year)) %>% 
+  ggplot(aes(x=lifeExp, group=year, fill=year))+
+  geom_density(alpha  =0.4, color = "black")+
+  labs(title = "Distrubition of Life Expectancy")
 
 
 ```
@@ -150,16 +163,19 @@ gapminder %>%
        y = "GDP")
 ```
 ## ANSWER TO QUESTION 10. For some reason every code chunk that I put under the question 10 did not have the little run button. Must be some sort of glitch. (**10. Make one plot of your choice that uses faceting!**)
+
 ```{r}
 gapminder %>% 
-  ggplot(aes(x=country, y=pop, fill=lifeExp))+ 
-  geom_boxplot(alpha=0.6) + 
-  facet_wrap(~lifeExp, ncol=6)+
+  filter(country == "China" | country == "India" | country == "United States" | country == "Indonesia" | country == "Brazil") %>% 
+  ggplot(aes(x=lifeExp, y=pop, fill=country))+ 
+  geom_point(alpha=0.6) + 
+    geom_smooth(method=lm, se=T)+
+  facet_wrap(~year, ncol=4)+
   theme(axis.text.x = element_text(angle = 50, hjust = 2))+
   labs(title = "Population vs Life Expectancy Per country",
        x = NULL,
        y = "Population",
-       fill = "lifeExp")
+       fill = "country")
 ```
 ## Whenever I run the code above it just keeps loading and does not produce a plot. Will ask about it in class. 
 ## Push your final code to GitHub!
