@@ -67,7 +67,7 @@ here()
 
 Want to try the `here` package?
 ```{r}
-heartrate <- read_csv(here("data", "heartrate.csv"))
+heartrate <- read_csv(here("lab8", "data", "heartrate.csv"))
 ```
 
 Let's assess whether or not these data are tidy.  
@@ -90,7 +90,7 @@ heartrate %>%
 ## Practice
 1. Import the file `relig_income.csv` and store it as a new object `relig_income`.  
 ```{r}
-religion_income <- read_csv(here("data", "relig_income.csv"))
+religion_income <- read_csv(here("lab8", "data", "relig_income.csv"))
 ```
 2. Why are these data untidy?  
 They are using money as a bunch of treatments when the income should be the treatment and the money should be the data
@@ -149,7 +149,7 @@ billboard %>%
 ## Practice  
 1. Import `plant_data.csv` as a new object `plant_data`.  
 ```{r}
-plant_data <- read_csv(here("data", "plant_data.csv"))
+plant_data <- read_csv(here("lab8", "data", "plant_data.csv"))
 ```
 
 2. Why are these data not tidy?  

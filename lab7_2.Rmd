@@ -44,7 +44,7 @@ Let's next check to see if our data has any NA's by evaluating everything logica
 
 Keep in mind, if the authors of the data represented NA's in another way, they will not be detected by R.  
 ```{r}
-#is.na(msleep)
+is.na(msleep)
 ```
 
 We also learned...
