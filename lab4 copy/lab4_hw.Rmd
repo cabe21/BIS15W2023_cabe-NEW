@@ -69,17 +69,44 @@ levels(homerange$order)
 
 **4. What taxa are represented in the `homerange` data frame? Make a new data frame `taxa` that is restricted to taxon, common name, class, order, family, genus, species.** 
 ```{r}
-
+homerange %>%  
+  select(taxon, common.name, class, order, family, genus, species)
 ```
 
 
 **5. The variable `taxon` identifies the large, common name groups of the species represented in `homerange`. Make a table the shows the counts for each of these `taxon`.**  
+```{r}
+homerange %>% 
+  count(taxon)
+```
+
 
 **6. The species in `homerange` are also classified into trophic guilds. How many species are represented in each trophic guild.**  
+```{r}
+homerange %>% 
+  group_by(species, trophic.guild) %>% 
+count(species)
+```
 
 **7. Make two new data frames, one which is restricted to carnivores and another that is restricted to herbivores.**  
+```{r}
+carnivores <- homerange %>% 
+              filter(trophic.guild == "herbivore")
+```
+```{r}
+herbivores <- homerange %>% 
+              filter(trophic.guild == "carnivores")
+```
 
 **8. Do herbivores or carnivores have, on average, a larger `mean.hra.m2`? Remove any NAs from the data.**  
+```{r}
+carnivores %>% 
+  mean(mean.hra.m2, na.rm = T)
+```
+```{r}
+herbivores %>% 
+  mean(mean.hra.m2, na.rm = T)
+```
 
 **9. Make a new dataframe `deer` that is limited to the mean mass, log10 mass, family, genus, and species of deer in the database. The family for deer is cervidae. Arrange the data in descending order by log10 mass. Which is the largest deer? What is its common name?**  
 
