@@ -3,9 +3,9 @@ title: "Lab 4 Homework"
 author: "Chris Abe"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_document: 
     theme: spacelab
-    toc: no
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -91,26 +91,49 @@ count(species)
 **7. Make two new data frames, one which is restricted to carnivores and another that is restricted to herbivores.**  
 ```{r}
 carnivores <- homerange %>% 
-              filter(trophic.guild == "herbivore")
+              filter(trophic.guild == "carnivore")
 ```
 ```{r}
 herbivores <- homerange %>% 
-              filter(trophic.guild == "carnivores")
+              filter(trophic.guild == "herbivore")
 ```
 
 **8. Do herbivores or carnivores have, on average, a larger `mean.hra.m2`? Remove any NAs from the data.**  
 ```{r}
-carnivores %>% 
-  mean(mean.hra.m2, na.rm = T)
+carnivores.v2 <- carnivores[ ,13]
+colMeans(carnivores.v2, na.rm=T)
 ```
 ```{r}
-herbivores %>% 
-  mean(mean.hra.m2, na.rm = T)
+herbivores.v2 <- herbivores[ , 13]
+   colMeans(herbivores.v2, na.rm = T)
 ```
 
 **9. Make a new dataframe `deer` that is limited to the mean mass, log10 mass, family, genus, and species of deer in the database. The family for deer is cervidae. Arrange the data in descending order by log10 mass. Which is the largest deer? What is its common name?**  
+```{r}
+deer <- homerange%>% 
+    select(mean.mass.g, log10.mass, family, genus, species) %>% 
+  filter(family == "cervidae") %>% 
+  arrange(desc(log10.mass))
+deer
+  
+
+    
+```
+#The largest deer is the A.alces. 
+```{r}
+homerange %>% filter(genus == "alces")
+```
+#Moose is the common name 
 
 **10. As measured by the data, which snake species has the smallest homerange? Show all of your work, please. Look this species up online and tell me about it!** **Snake is found in taxon column**    
+```{r}
+snakes <- homerange %>% select(mean.hra.m2, family, taxon, genus, species) %>% 
+  filter(taxon == "snakes") %>% 
+  arrange(mean.hra.m2)
+snakes
+```
+#Bitis schneider is a venomous snake that is also called the narmaqua Dwarf adder. It lives in South Africa and Namibia. It has a max length of 11 inches. 
+#Source: https://en.wikipedia.org/wiki/Bitis_schneideri
 
 ## Push your final code to GitHub!
 Please be sure that you check the `keep md` file in the knit preferences.   
